@@ -56,9 +56,18 @@
         </details>
         <div class="notes-search"><label class="form-field">Rechercher dans mes notes<input class="field" id="noteSearch" type="search" placeholder="Mot-clé, build, donjon…"></label></div>
         <div class="note-list" id="noteList" aria-live="polite"></div>
+        <details class="backup-details">
+          <summary>Sauvegarder ou transférer mes données</summary>
+          <p class="subtle backup-description">Le fichier contient tes tâches, leur progression et tes notes.</p>
+          <div class="backup-actions">
+            <button class="small-btn" id="exportBackup" type="button">Exporter en JSON</button>
+            <button class="small-btn" id="importBackupTrigger" type="button">Importer un JSON</button>
+            <input id="importBackupFile" type="file" accept=".json,application/json" hidden>
+          </div>
+        </details>
       </aside>
     </div>
-    <footer class="footer">Tes données sont stockées dans ce navigateur. Pense à exporter tes notes si tu changes d’appareil.</footer>
+    <footer class="footer">Tes données restent dans ce navigateur. Exporte tâches, progression et notes depuis le carnet pour les sauvegarder.</footer>
   </main>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>

@@ -113,6 +113,10 @@ body.layout-left .app { margin-right: auto; margin-left: 0; }
 .note-actions { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 7px; }
 .notes-search { margin-top: 8px; }
 .note-list { display: grid; max-height: min(520px, calc(100vh - 345px)); gap: 8px; overflow: auto; margin-top: 10px; }
+.backup-details { margin-top: 11px; padding-top: 9px; border-top: 1px solid var(--line); }
+.backup-details > summary { color: var(--accent-strong); cursor: pointer; font-size: 12px; font-weight: 650; }
+.backup-description { margin: 7px 0; }
+.backup-actions { display: flex; flex-wrap: wrap; gap: 7px; }
 .note-item { padding: 10px 11px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-soft); }
 .note-item-head { display: flex; justify-content: space-between; align-items: start; gap: 8px; }
 .note-item h3 { margin: 0; font: 500 15px Georgia, serif; }

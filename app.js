@@ -6,6 +6,7 @@
   const STORAGE_KEY = 'journal-tamriel-v1';
   const ALIGNMENT_KEY = 'journal-tamriel-alignment-v1';
   const SHOW_COMPLETED_KEY = 'journal-tamriel-show-completed-v1';
+  const BACKUP_FORMAT_VERSION = 1;
   // Les resets du serveur EU sont à 03:00 UTC toute l'année.
   const RESET_UTC_HOUR = 3;
   const DEFAULT_TASKS = [
@@ -108,6 +109,34 @@
 
   function saveData() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+  function isRecord(value) { return value !== null && typeof value === 'object' && !Array.isArray(value); }
+  function isBackup(value) {
+    if (!isRecord(value) || value.app !== 'eso-companion' || value.formatVersion !== BACKUP_FORMAT_VERSION || !isRecord(value.data)) return false;
+    const backup = value.data;
+    if (backup.version !== 2 || !Array.isArray(backup.tasks) || !Array.isArray(backup.notes) || !isRecord(backup.days) || !isRecord(backup.weeks)) return false;
+    const validTasks = backup.tasks.every(task => isRecord(task) && typeof task.id === 'string' && typeof task.title === 'string' && ['daily', 'weekly', 'other'].includes(task.category));
+    const validNotes = backup.notes.every(note => isRecord(note) && typeof note.id === 'string' && typeof note.body === 'string');
+    const validPeriods = bucket => Object.values(bucket).every(period => isRecord(period) && isRecord(period.done));
+    return validTasks && validNotes && validPeriods(backup.days) && validPeriods(backup.weeks);
+  }
+  function exportBackup() {
+    const backup = {
+      app: 'eso-companion',
+      formatVersion: BACKUP_FORMAT_VERSION,
+      exportedAt: new Date().toISOString(),
+      data: { version: data.version, tasks: data.tasks, days: data.days, weeks: data.weeks, notes: data.notes }
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `eso-companion-backup-${esoDay()}.json`;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast('Sauvegarde téléchargée');
   }
   function taskState(task, date = selectedDay) {
     const bucket = task.category === 'weekly' ? data.weeks : data.days;
@@ -318,6 +347,38 @@
   });
   $('cancelEdit').addEventListener('click', resetNoteForm);
   $('noteSearch').addEventListener('input', renderNotes);
+  $('exportBackup').addEventListener('click', exportBackup);
+  $('importBackupTrigger').addEventListener('click', () => $('importBackupFile').click());
+  $('importBackupFile').addEventListener('change', async event => {
+    const input = event.currentTarget;
+    const file = input.files && input.files[0];
+    input.value = '';
+    if (!file) return;
+    try {
+      const backup = JSON.parse(await file.text());
+      if (!isBackup(backup)) {
+        showToast('Ce fichier ne correspond pas à une sauvegarde ESO Companion');
+        return;
+      }
+      if (!window.confirm('Cette sauvegarde remplacera les tâches, la progression et les notes de cet appareil. Continuer ?')) return;
+      const previous = { tasks: data.tasks, days: data.days, weeks: data.weeks, notes: data.notes };
+      data.tasks = backup.data.tasks;
+      data.days = backup.data.days;
+      data.weeks = migrateWeeks(backup.data.weeks);
+      data.notes = backup.data.notes;
+      try {
+        saveData();
+      } catch {
+        Object.assign(data, previous);
+        showToast('Impossible d’enregistrer cette sauvegarde sur cet appareil');
+        return;
+      }
+      render();
+      showToast('Sauvegarde restaurée');
+    } catch {
+      showToast('Impossible de lire ce fichier JSON');
+    }
+  });
 
   // Au changement de période serveur, l'onglet bascule automatiquement vers la nouvelle journée ESO.
   let activeLogicalDay = esoDay();
