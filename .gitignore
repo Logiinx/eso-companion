@@ -1,0 +1,6 @@
+# Fichiers générés ou propres à une machine
+node_modules/
+dist/
+.DS_Store
+Thumbs.db
+.vscode/

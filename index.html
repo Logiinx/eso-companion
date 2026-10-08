@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101113">
+  <title>Journal de Tamriel</title>
+  <link rel="stylesheet" href="app.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="app">
+    <header class="topline">
+      <a class="brand" href="#top" aria-label="Journal de Tamriel, accueil"><span class="sigil" aria-hidden="true">✦</span><span><span class="eyebrow">Compagnon personnel</span><strong>Journal de Tamriel</strong></span></a>
+      <div class="top-actions">
+        <button class="small-btn align-toggle" id="alignToggle" type="button" aria-pressed="false">⇤ Aligner à gauche</button>
+        <span class="local-tag" title="Tes données restent dans ce navigateur">Enregistré sur cet appareil</span>
+      </div>
+    </header>
+    <section class="summary" aria-label="Progression du jour">
+      <div class="progress-card"><div class="progress-top"><span class="progress-title">Daily</span><span class="progress-number" id="dailyProgressLabel">0 / 0 terminée</span></div><div class="track"><div class="fill" id="dailyProgressFill"></div></div></div>
+      <div class="progress-card"><div class="progress-top"><span class="progress-title">Weekly</span><span class="progress-number" id="weeklyProgressLabel">0 / 0 terminée</span></div><div class="track"><div class="fill" id="weeklyProgressFill"></div></div></div>
+      <div class="stat-card"><div class="remaining-count"><strong id="remaining">0</strong><span>tâche(s) restante(s)</span></div><button class="small-btn" id="resetDay" type="button">Tout décocher</button></div>
+    </section>
+    <div class="dashboard-grid">
+      <div class="tasks-column">
+        <section class="card task-panel daily-panel">
+          <div class="card-head"><div><h2>Daily</h2><div class="subtle" id="listDate"></div></div><div class="task-controls"><button class="small-btn" id="completedToggle" type="button" aria-pressed="false">Afficher terminées</button></div></div>
+          <div class="task-list" id="taskListDaily" aria-live="polite"></div>
+          <details class="add-details" id="addDetails"><summary>＋ Ajouter une tâche</summary>
+            <form class="add-form" id="addForm">
+              <label class="form-field wide">Tâche<input class="field" id="taskInput" maxlength="80" placeholder="Ex. Daily crafting writs" required></label>
+              <label class="form-field">Catégorie<select class="field" id="categoryInput"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="other">Autre</option></select></label>
+              <label class="form-field">Priorité<select class="field" id="priorityInput"><option value="normal">Normale</option><option value="high">Haute</option><option value="low">Basse</option></select></label>
+              <div class="task-form-actions wide"><button class="btn" id="taskSubmit" type="submit">＋ Ajouter à ma liste</button><button class="small-btn hidden" id="cancelTaskEdit" type="button">Annuler la modification</button></div>
+            </form>
+          </details>
+        </section>
+        <section class="card category-panel">
+          <div class="category-section"><div class="section-heading"><h2>Weekly</h2><span class="subtle" id="weeklyCount"></span></div><div class="task-list" id="taskListWeekly" aria-live="polite"></div></div>
+          <div class="category-divider"></div>
+          <div class="category-section"><div class="section-heading"><h2>Autre</h2><span class="subtle" id="otherCount"></span></div><div class="task-list" id="taskListOther" aria-live="polite"></div></div>
+          <p class="tip"><strong>Serveur EU :</strong> Daily à 03:00 UTC · Weekly le dimanche à 03:00 UTC.</p>
+        </section>
+      </div>
+      <aside class="card notes-card">
+        <div class="card-head"><div><h2>Carnet de voyage</h2><div class="subtle">Builds, sets, donjons, farming…</div></div></div>
+        <details class="note-editor" id="noteEditor"><summary id="noteEditorSummary">＋ Nouvelle note</summary>
+          <form id="noteForm" class="note-form">
+            <input id="noteId" type="hidden">
+            <label class="form-field">Titre<input class="field" id="noteTitle" maxlength="80" placeholder="Ex. Build arcaniste solo"></label>
+            <input id="noteDate" type="hidden">
+            <label class="form-field">Note<textarea class="field note" id="noteBody" maxlength="5000" placeholder="Tes idées et repères…" required></textarea></label>
+            <div class="note-actions"><span class="subtle" id="charCount">0 / 5000</span><button class="btn" id="saveNote" type="submit">Enregistrer la note</button><button class="small-btn hidden" id="cancelEdit" type="button">Annuler</button></div>
+          </form>
+        </details>
+        <div class="notes-search"><label class="form-field">Rechercher dans mes notes<input class="field" id="noteSearch" type="search" placeholder="Mot-clé, build, donjon…"></label></div>
+        <div class="note-list" id="noteList" aria-live="polite"></div>
+      </aside>
+    </div>
+    <footer class="footer">Tes données sont stockées dans ce navigateur. Pense à exporter tes notes si tu changes d’appareil.</footer>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
