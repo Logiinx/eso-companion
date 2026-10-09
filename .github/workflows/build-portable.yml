@@ -1,0 +1,38 @@
+name: Build portable Windows executable
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-portable.yml'
+      - 'src-tauri/**'
+      - 'web/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install stable Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Tauri CLI
+        run: cargo install tauri-cli --version '^2' --locked
+
+      - name: Build portable executable
+        working-directory: src-tauri
+        run: cargo tauri build
+
+      - name: Upload portable executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: eso-companion-windows-portable
+          path: src-tauri/target/release/eso_companion.exe
+          if-no-files-found: error
+          retention-days: 7

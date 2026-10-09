@@ -1,6 +1,8 @@
 # Fichiers générés ou propres à une machine
 node_modules/
 dist/
+target/
+src-tauri/target/
 .DS_Store
 Thumbs.db
 .vscode/
